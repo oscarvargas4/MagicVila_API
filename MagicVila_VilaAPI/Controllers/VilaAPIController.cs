@@ -10,10 +10,18 @@ namespace MagicVila_VilaAPI.Controllers
     [ApiController]
     public class VilaAPIController : ControllerBase
     {
+        private readonly ILogger<VilaAPIController> _logger;
+
+        public VilaAPIController(ILogger<VilaAPIController> logger)
+        {
+            this._logger = logger;
+        }
+
         [HttpGet]
         [ProducesResponseType(200)]
         public ActionResult<IEnumerable<VilaDto>> GetVilas()
         {
+            _logger.LogInformation("Getting all vilas");
             return Ok(VilaStore.vilaList);
         }
 
@@ -24,9 +32,14 @@ namespace MagicVila_VilaAPI.Controllers
         // another way: [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<VilaDto> GetVila(int id)
         {
-            if (id == 0) return BadRequest();
+            if (id == 0) 
+            {
+                _logger.LogError($"Vila with id: {id} was not found");
+                return BadRequest();
+            } 
             var vila = VilaStore.vilaList.FirstOrDefault(u => u.Id == id);
             if (vila == null) return NotFound();
+            _logger.LogInformation($"Getting vila with id: {id}");
             return Ok(vila);
         }
 
