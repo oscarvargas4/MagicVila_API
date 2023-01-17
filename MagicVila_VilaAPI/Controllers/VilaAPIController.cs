@@ -1,4 +1,5 @@
 ﻿using MagicVila_VilaAPI.Data;
+using MagicVila_VilaAPI.Logging;
 using MagicVila_VilaAPI.Models.Dto;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -10,18 +11,18 @@ namespace MagicVila_VilaAPI.Controllers
     [ApiController]
     public class VilaAPIController : ControllerBase
     {
-        private readonly ILogger<VilaAPIController> _logger;
+        private readonly ILogging _logger;
 
-        public VilaAPIController(ILogger<VilaAPIController> logger)
+        public VilaAPIController(ILogging logger)
         {
-            this._logger = logger;
+            _logger = logger;
         }
 
         [HttpGet]
         [ProducesResponseType(200)]
         public ActionResult<IEnumerable<VilaDto>> GetVilas()
         {
-            _logger.LogInformation("Getting all vilas");
+            _logger.Log("Getting all vilas", "");
             return Ok(VilaStore.vilaList);
         }
 
@@ -32,14 +33,14 @@ namespace MagicVila_VilaAPI.Controllers
         // another way: [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<VilaDto> GetVila(int id)
         {
-            if (id == 0) 
+            if (id == 0)
             {
-                _logger.LogError($"Vila with id: {id} was not found");
+                _logger.Log($"Vila with id: {id} was not found", "error");
                 return BadRequest();
-            } 
+            }
             var vila = VilaStore.vilaList.FirstOrDefault(u => u.Id == id);
             if (vila == null) return NotFound();
-            _logger.LogInformation($"Getting vila with id: {id}");
+            _logger.Log($"Getting vila with id: {id}","");
             return Ok(vila);
         }
 
@@ -77,6 +78,7 @@ namespace MagicVila_VilaAPI.Controllers
         [HttpPut("{id:int}", Name = "DeleteVila")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public IActionResult UpdateVila(int id, [FromBody] VilaDto vilaDto)
         {
             if (vilaDto == null | id != vilaDto.Id)
@@ -84,6 +86,7 @@ namespace MagicVila_VilaAPI.Controllers
                 return BadRequest();
             }
             var vila = VilaStore.vilaList.FirstOrDefault(u => u.Id == id);
+            if (vila == null) return NotFound();
             vila.Name = vilaDto.Name;
             vila.Sqft = vilaDto.Sqft;
             vila.Occupancy = vilaDto.Occupancy;
