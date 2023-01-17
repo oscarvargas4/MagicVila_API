@@ -1,10 +1,15 @@
 
+using MagicVila_VilaAPI.Data;
 using MagicVila_VilaAPI.Logging;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddDbContext<ApplicationDbContext>(option =>
+{
+    option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
+});
 builder.Services.AddControllers(option =>
 {
     // option.ReturnHttpNotAcceptable = true;  // If the header request an specific 'application/*type* and the app doesn't have the formater, responds with an error
