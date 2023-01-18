@@ -4,6 +4,7 @@ using MagicVila_VilaAPI.Models;
 using MagicVila_VilaAPI.Models.Dto;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace MagicVila_VilaAPI.Controllers
 {
@@ -96,11 +97,11 @@ namespace MagicVila_VilaAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult UpdateVila(int id, [FromBody] VilaDto vilaDto)
         {
-            if (vilaDto == null | id != vilaDto.Id)
+            if (vilaDto == null | id != vilaDto.Id )
             {
                 return BadRequest();
             }
-            var vila = _db.Vilas.FirstOrDefault(u => u.Id == id);
+            var vila = _db.Vilas.AsNoTracking().FirstOrDefault(u => u.Id == id);
             if (vila == null) return NotFound();
             Vila model = new Vila()
             {
@@ -127,7 +128,7 @@ namespace MagicVila_VilaAPI.Controllers
         {
             // https://jsonpatch.com/
             if (patchDto == null | id == 0) return BadRequest();
-            var vila = _db.Vilas.FirstOrDefault(u => u.Id == id);
+            var vila = _db.Vilas.AsNoTracking().FirstOrDefault(u => u.Id == id);
             if (vila == null) return NotFound();
             VilaDto modelDto = new VilaDto()
             {
