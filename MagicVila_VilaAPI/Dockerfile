@@ -21,7 +21,7 @@
 #COPY --from=publish /app/publish .
 #ENTRYPOINT ["dotnet", "MagicVila_VilaAPI.dll"]
 
-FROM mcr.microsoft.com/mssql/server:2022-latest
-ENV ACCEPT_EULA=Y
-ENV SA_PASSWORD=Your!rOOT
-EXPOSE 1433
+#FROM mcr.microsoft.com/mssql/server:2022-latest
+#ENV ACCEPT_EULA=Y
+#ENV SA_PASSWORD=Your!rOOT
+#EXPOSE 1433
