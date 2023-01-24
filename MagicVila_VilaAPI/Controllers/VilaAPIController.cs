@@ -1,4 +1,5 @@
-﻿using MagicVila_VilaAPI.Data;
+﻿using AutoMapper;
+using MagicVila_VilaAPI.Data;
 using MagicVila_VilaAPI.Logging;
 using MagicVila_VilaAPI.Models;
 using MagicVila_VilaAPI.Models.Dto;
@@ -15,19 +16,22 @@ namespace MagicVila_VilaAPI.Controllers
     {
         private readonly ILogging _logger;
         private readonly ApplicationDbContext _db;
+        private readonly IMapper _mapper;
 
-        public VilaAPIController(ILogging logger, ApplicationDbContext db)
+        public VilaAPIController(ILogging logger, ApplicationDbContext db, IMapper mapper)
         {
             _logger = logger;
             _db = db;
+            _mapper = mapper;
         }
 
         [HttpGet]
         [ProducesResponseType(200)]
-        public ActionResult<IEnumerable<VilaDto>> GetVilas()
+        public async Task<ActionResult<IEnumerable<VilaDto>>> GetVilas()
         {
             _logger.Log("Getting all vilas", "");
-            return Ok(_db.Vilas.ToList());
+            IEnumerable<Vila> vilaList = await _db.Vilas.ToListAsync();
+            return Ok(_mapper.Map<List<VilaDto>>(vilaList));
         }
 
         [HttpGet("{id:int}", Name = "GetVila")]
@@ -35,59 +39,60 @@ namespace MagicVila_VilaAPI.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
         // another way: [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<VilaDto> GetVila(int id)
+        public async Task<ActionResult<VilaDto>> GetVila(int id)
         {
             if (id == 0)
             {
                 _logger.Log($"Vila with id: {id} was not found", "error");
                 return BadRequest();
             }
-            var vila = _db.Vilas.FirstOrDefault(u => u.Id == id);
+            var vila = await _db.Vilas.FirstOrDefaultAsync(u => u.Id == id);
             if (vila == null) return NotFound();
             _logger.Log($"Getting vila with id: {id}","");
-            return Ok(vila);
+            return Ok(_mapper.Map<VilaDto>(vila));
         }
 
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public ActionResult<VilaDto> CreateVila([FromBody] VilaDto vilaDto)
+        public async Task<ActionResult<VilaDto>> CreateVila([FromBody] VilaCreateDto createDto)
         {
-            if (_db.Vilas.FirstOrDefault(u => u.Name.ToLower() == vilaDto.Name.ToLower()) != null)
+            if (await _db.Vilas.FirstOrDefaultAsync(u => u.Name.ToLower() == createDto.Name.ToLower()) != null)
             {
                 ModelState.AddModelError("CustomError", "Vila already exists!");
                 return BadRequest(ModelState);
             }
-            if (vilaDto == null) return BadRequest(vilaDto);
-            if (vilaDto.Id > 0) return BadRequest(vilaDto);
-            Vila model = new Vila()
-            {
-                Amenity= vilaDto.Amenity,
-                Details = vilaDto.Details,
-                Id = vilaDto.Id,
-                ImageUrl = vilaDto.ImageUrl,
-                Name = vilaDto.Name,
-                Occupancy = vilaDto.Occupancy,
-                Rate = vilaDto.Rate,
-                Sqft = vilaDto.Sqft
-            };
-            _db.Vilas.Add(model);
-            _db.SaveChanges();
-            return CreatedAtRoute("GetVila", new { id = vilaDto.Id }, vilaDto);
+            if (createDto == null) return BadRequest(createDto);
+            //if (vilaDto.Id > 0) return BadRequest(vilaDto);
+            Vila model = _mapper.Map<Vila>(createDto); // This line replace what old model does (commented code below)
+            //Vila model = new Vila()
+            //{
+            //    Amenity= createDto.Amenity,
+            //    Details = createDto.Details,
+            //    //Id = createDto.Id,
+            //    ImageUrl = createDto.ImageUrl,
+            //    Name = createDto.Name,
+            //    Occupancy = createDto.Occupancy,
+            //    Rate = createDto.Rate,
+            //    Sqft = createDto.Sqft
+            //};
+            await _db.Vilas.AddAsync(model);
+            await _db.SaveChangesAsync();
+            return CreatedAtRoute("GetVila", new { id = model.Id }, model);
         }
 
         [HttpDelete("{id:int}", Name = "DeleteVila")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult DeleteVila(int id)
+        public async Task<IActionResult> DeleteVila(int id)
         {
             if (id == 0) return BadRequest();
-            var vila = _db.Vilas.FirstOrDefault(u => u.Id == id);
+            var vila = await _db.Vilas.FirstOrDefaultAsync(u => u.Id == id);
             if (vila == null) return NotFound();
             _db.Vilas.Remove(vila);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
             return NoContent();
         }
 
@@ -95,27 +100,17 @@ namespace MagicVila_VilaAPI.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateVila(int id, [FromBody] VilaDto vilaDto)
+        public async Task<IActionResult> UpdateVila(int id, [FromBody] VilaUpdateDto updateVila)
         {
-            if (vilaDto == null | id != vilaDto.Id )
+            if (updateVila == null | id != updateVila.Id )
             {
                 return BadRequest();
             }
-            var vila = _db.Vilas.AsNoTracking().FirstOrDefault(u => u.Id == id);
+            var vila = await _db.Vilas.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
             if (vila == null) return NotFound();
-            Vila model = new Vila()
-            {
-                Amenity = vilaDto.Amenity,
-                Details = vilaDto.Details,
-                Id = vilaDto.Id,
-                ImageUrl = vilaDto.ImageUrl,
-                Name = vilaDto.Name,
-                Occupancy = vilaDto.Occupancy,
-                Rate = vilaDto.Rate,
-                Sqft = vilaDto.Sqft
-            };
+            Vila model = _mapper.Map<Vila>(updateVila);
             _db.Vilas.Update(model);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             return NoContent();
         }
@@ -124,38 +119,18 @@ namespace MagicVila_VilaAPI.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdatePartialVila(int id, JsonPatchDocument<VilaDto> patchDto)
+        public async Task<IActionResult> UpdatePartialVila(int id, JsonPatchDocument<VilaUpdateDto> patchDto)
         {
             // https://jsonpatch.com/
             if (patchDto == null | id == 0) return BadRequest();
-            var vila = _db.Vilas.AsNoTracking().FirstOrDefault(u => u.Id == id);
+            var vila = await _db.Vilas.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
             if (vila == null) return NotFound();
-            VilaDto modelDto = new VilaDto()
-            {
-                Amenity = vila.Amenity,
-                Details = vila.Details,
-                Id = vila.Id,
-                ImageUrl = vila.ImageUrl,
-                Name = vila.Name,
-                Occupancy = vila.Occupancy,
-                Rate = vila.Rate,
-                Sqft = vila.Sqft
-            };
+            VilaUpdateDto modelDto = _mapper.Map<VilaUpdateDto>(vila);
             patchDto.ApplyTo(modelDto, ModelState);
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            Vila model = new Vila()
-            {
-                Amenity = modelDto.Amenity,
-                Details = modelDto.Details,
-                Id = modelDto.Id,
-                ImageUrl = modelDto.ImageUrl,
-                Name = modelDto.Name,
-                Occupancy = modelDto.Occupancy,
-                Rate = modelDto.Rate,
-                Sqft = modelDto.Sqft
-            };
+            Vila model = _mapper.Map<Vila>(modelDto);
             _db.Vilas.Update(model);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
             return NoContent();
         }
 
