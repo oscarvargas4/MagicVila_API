@@ -24,10 +24,10 @@ namespace MagicVila_VilaAPI.Controllers
 
         [HttpGet]
         [ProducesResponseType(200)]
-        public ActionResult<IEnumerable<VilaDto>> GetVilas()
+        public async Task<ActionResult<IEnumerable<VilaDto>>> GetVilas()
         {
             _logger.Log("Getting all vilas", "");
-            return Ok(_db.Vilas.ToList());
+            return Ok(await _db.Vilas.ToListAsync());
         }
 
         [HttpGet("{id:int}", Name = "GetVila")]
@@ -35,14 +35,14 @@ namespace MagicVila_VilaAPI.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
         // another way: [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<VilaDto> GetVila(int id)
+        public async Task<ActionResult<VilaDto>> GetVila(int id)
         {
             if (id == 0)
             {
                 _logger.Log($"Vila with id: {id} was not found", "error");
                 return BadRequest();
             }
-            var vila = _db.Vilas.FirstOrDefault(u => u.Id == id);
+            var vila = await _db.Vilas.FirstOrDefaultAsync(u => u.Id == id);
             if (vila == null) return NotFound();
             _logger.Log($"Getting vila with id: {id}","");
             return Ok(vila);
@@ -52,9 +52,9 @@ namespace MagicVila_VilaAPI.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public ActionResult<VilaDto> CreateVila([FromBody] VilaCreateDto vilaDto)
+        public async Task<ActionResult<VilaDto>> CreateVila([FromBody] VilaCreateDto vilaDto)
         {
-            if (_db.Vilas.FirstOrDefault(u => u.Name.ToLower() == vilaDto.Name.ToLower()) != null)
+            if (await _db.Vilas.FirstOrDefaultAsync(u => u.Name.ToLower() == vilaDto.Name.ToLower()) != null)
             {
                 ModelState.AddModelError("CustomError", "Vila already exists!");
                 return BadRequest(ModelState);
@@ -72,8 +72,8 @@ namespace MagicVila_VilaAPI.Controllers
                 Rate = vilaDto.Rate,
                 Sqft = vilaDto.Sqft
             };
-            _db.Vilas.Add(model);
-            _db.SaveChanges();
+            await _db.Vilas.AddAsync(model);
+            await _db.SaveChangesAsync();
             return CreatedAtRoute("GetVila", new { id = model.Id }, model);
         }
 
@@ -81,13 +81,13 @@ namespace MagicVila_VilaAPI.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult DeleteVila(int id)
+        public async Task<IActionResult> DeleteVila(int id)
         {
             if (id == 0) return BadRequest();
-            var vila = _db.Vilas.FirstOrDefault(u => u.Id == id);
+            var vila = await _db.Vilas.FirstOrDefaultAsync(u => u.Id == id);
             if (vila == null) return NotFound();
             _db.Vilas.Remove(vila);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
             return NoContent();
         }
 
@@ -95,13 +95,13 @@ namespace MagicVila_VilaAPI.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateVila(int id, [FromBody] VilaUpdateDto vilaDto)
+        public async Task<IActionResult> UpdateVila(int id, [FromBody] VilaUpdateDto vilaDto)
         {
             if (vilaDto == null | id != vilaDto.Id )
             {
                 return BadRequest();
             }
-            var vila = _db.Vilas.AsNoTracking().FirstOrDefault(u => u.Id == id);
+            var vila = await _db.Vilas.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
             if (vila == null) return NotFound();
             Vila model = new Vila()
             {
@@ -115,7 +115,7 @@ namespace MagicVila_VilaAPI.Controllers
                 Sqft = vilaDto.Sqft
             };
             _db.Vilas.Update(model);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             return NoContent();
         }
@@ -124,11 +124,11 @@ namespace MagicVila_VilaAPI.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdatePartialVila(int id, JsonPatchDocument<VilaUpdateDto> patchDto)
+        public async Task<IActionResult> UpdatePartialVila(int id, JsonPatchDocument<VilaUpdateDto> patchDto)
         {
             // https://jsonpatch.com/
             if (patchDto == null | id == 0) return BadRequest();
-            var vila = _db.Vilas.AsNoTracking().FirstOrDefault(u => u.Id == id);
+            var vila = await _db.Vilas.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
             if (vila == null) return NotFound();
             VilaUpdateDto modelDto = new ()
             {
@@ -155,7 +155,7 @@ namespace MagicVila_VilaAPI.Controllers
                 Sqft = modelDto.Sqft
             };
             _db.Vilas.Update(model);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
             return NoContent();
         }
 
