@@ -52,7 +52,7 @@ namespace MagicVila_VilaAPI.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public ActionResult<VilaDto> CreateVila([FromBody] VilaDto vilaDto)
+        public ActionResult<VilaDto> CreateVila([FromBody] VilaCreateDto vilaDto)
         {
             if (_db.Vilas.FirstOrDefault(u => u.Name.ToLower() == vilaDto.Name.ToLower()) != null)
             {
@@ -60,12 +60,12 @@ namespace MagicVila_VilaAPI.Controllers
                 return BadRequest(ModelState);
             }
             if (vilaDto == null) return BadRequest(vilaDto);
-            if (vilaDto.Id > 0) return BadRequest(vilaDto);
+            //if (vilaDto.Id > 0) return BadRequest(vilaDto);
             Vila model = new Vila()
             {
                 Amenity= vilaDto.Amenity,
                 Details = vilaDto.Details,
-                Id = vilaDto.Id,
+                //Id = vilaDto.Id,
                 ImageUrl = vilaDto.ImageUrl,
                 Name = vilaDto.Name,
                 Occupancy = vilaDto.Occupancy,
@@ -74,7 +74,7 @@ namespace MagicVila_VilaAPI.Controllers
             };
             _db.Vilas.Add(model);
             _db.SaveChanges();
-            return CreatedAtRoute("GetVila", new { id = vilaDto.Id }, vilaDto);
+            return CreatedAtRoute("GetVila", new { id = model.Id }, model);
         }
 
         [HttpDelete("{id:int}", Name = "DeleteVila")]
@@ -95,7 +95,7 @@ namespace MagicVila_VilaAPI.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateVila(int id, [FromBody] VilaDto vilaDto)
+        public IActionResult UpdateVila(int id, [FromBody] VilaUpdateDto vilaDto)
         {
             if (vilaDto == null | id != vilaDto.Id )
             {
@@ -124,13 +124,13 @@ namespace MagicVila_VilaAPI.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdatePartialVila(int id, JsonPatchDocument<VilaDto> patchDto)
+        public IActionResult UpdatePartialVila(int id, JsonPatchDocument<VilaUpdateDto> patchDto)
         {
             // https://jsonpatch.com/
             if (patchDto == null | id == 0) return BadRequest();
             var vila = _db.Vilas.AsNoTracking().FirstOrDefault(u => u.Id == id);
             if (vila == null) return NotFound();
-            VilaDto modelDto = new VilaDto()
+            VilaUpdateDto modelDto = new ()
             {
                 Amenity = vila.Amenity,
                 Details = vila.Details,
