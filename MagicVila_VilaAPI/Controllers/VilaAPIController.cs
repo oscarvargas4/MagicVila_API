@@ -3,6 +3,7 @@ using MagicVila_VilaAPI.Data;
 using MagicVila_VilaAPI.Logging;
 using MagicVila_VilaAPI.Models;
 using MagicVila_VilaAPI.Models.Dto;
+using MagicVila_VilaAPI.Repository.IRepository;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,13 +16,13 @@ namespace MagicVila_VilaAPI.Controllers
     public class VilaAPIController : ControllerBase
     {
         private readonly ILogging _logger;
-        private readonly ApplicationDbContext _db;
+        private readonly IVilaRepository _dbVila;
         private readonly IMapper _mapper;
 
-        public VilaAPIController(ILogging logger, ApplicationDbContext db, IMapper mapper)
+        public VilaAPIController(ILogging logger, IVilaRepository dbVila, IMapper mapper)
         {
             _logger = logger;
-            _db = db;
+            _dbVila = dbVila;
             _mapper = mapper;
         }
 
@@ -30,7 +31,7 @@ namespace MagicVila_VilaAPI.Controllers
         public async Task<ActionResult<IEnumerable<VilaDto>>> GetVilas()
         {
             _logger.Log("Getting all vilas", "");
-            IEnumerable<Vila> vilaList = await _db.Vilas.ToListAsync();
+            IEnumerable<Vila> vilaList = await _dbVila.GetAllAsync();
             return Ok(_mapper.Map<List<VilaDto>>(vilaList));
         }
 
@@ -46,7 +47,7 @@ namespace MagicVila_VilaAPI.Controllers
                 _logger.Log($"Vila with id: {id} was not found", "error");
                 return BadRequest();
             }
-            var vila = await _db.Vilas.FirstOrDefaultAsync(u => u.Id == id);
+            var vila = await _dbVila.GetAsync(u => u.Id == id);
             if (vila == null) return NotFound();
             _logger.Log($"Getting vila with id: {id}","");
             return Ok(_mapper.Map<VilaDto>(vila));
@@ -58,7 +59,7 @@ namespace MagicVila_VilaAPI.Controllers
         [ProducesResponseType(400)]
         public async Task<ActionResult<VilaDto>> CreateVila([FromBody] VilaCreateDto createDto)
         {
-            if (await _db.Vilas.FirstOrDefaultAsync(u => u.Name.ToLower() == createDto.Name.ToLower()) != null)
+            if (await _dbVila.GetAsync(u => u.Name.ToLower() == createDto.Name.ToLower()) != null)
             {
                 ModelState.AddModelError("CustomError", "Vila already exists!");
                 return BadRequest(ModelState);
@@ -77,8 +78,7 @@ namespace MagicVila_VilaAPI.Controllers
             //    Rate = createDto.Rate,
             //    Sqft = createDto.Sqft
             //};
-            await _db.Vilas.AddAsync(model);
-            await _db.SaveChangesAsync();
+            await _dbVila.CreateAsync(model);
             return CreatedAtRoute("GetVila", new { id = model.Id }, model);
         }
 
@@ -89,10 +89,9 @@ namespace MagicVila_VilaAPI.Controllers
         public async Task<IActionResult> DeleteVila(int id)
         {
             if (id == 0) return BadRequest();
-            var vila = await _db.Vilas.FirstOrDefaultAsync(u => u.Id == id);
+            var vila = await _dbVila.GetAsync(u => u.Id == id);
             if (vila == null) return NotFound();
-            _db.Vilas.Remove(vila);
-            await _db.SaveChangesAsync();
+            await _dbVila.RemoveAsync(vila);
             return NoContent();
         }
 
@@ -106,11 +105,10 @@ namespace MagicVila_VilaAPI.Controllers
             {
                 return BadRequest();
             }
-            var vila = await _db.Vilas.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
+            var vila = await _dbVila.GetAsync(u => u.Id == id, tracked: false);
             if (vila == null) return NotFound();
             Vila model = _mapper.Map<Vila>(updateVila);
-            _db.Vilas.Update(model);
-            await _db.SaveChangesAsync();
+            await _dbVila.UpdateAsync(model);
 
             return NoContent();
         }
@@ -123,14 +121,13 @@ namespace MagicVila_VilaAPI.Controllers
         {
             // https://jsonpatch.com/
             if (patchDto == null | id == 0) return BadRequest();
-            var vila = await _db.Vilas.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
+            var vila = await _dbVila.GetAsync(u => u.Id == id, tracked: false);
             if (vila == null) return NotFound();
             VilaUpdateDto modelDto = _mapper.Map<VilaUpdateDto>(vila);
             patchDto.ApplyTo(modelDto, ModelState);
-            if (!ModelState.IsValid) return BadRequest(ModelState);
             Vila model = _mapper.Map<Vila>(modelDto);
-            _db.Vilas.Update(model);
-            await _db.SaveChangesAsync();
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            await _dbVila.UpdateAsync(model);
             return NoContent();
         }
 

@@ -2,6 +2,8 @@
 using MagicVila_VilaAPI;
 using MagicVila_VilaAPI.Data;
 using MagicVila_VilaAPI.Logging;
+using MagicVila_VilaAPI.Repository;
+using MagicVila_VilaAPI.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +14,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
 });
 builder.Services.AddAutoMapper(typeof(MappingConfig));
+builder.Services.AddScoped<IVilaRepository,VilaRepository>();
 builder.Services.AddControllers(option =>
 {
     // option.ReturnHttpNotAcceptable = true;  // If the header request an specific 'application/*type* and the app doesn't have the formater, responds with an error
