@@ -95,13 +95,13 @@ namespace MagicVila_VilaAPI.Controllers
             return NoContent();
         }
 
-        [HttpPut("{id:int}", Name = "DeleteVila")]
+        [HttpPut("{id:int}", Name = "UpdateVila")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public async Task<IActionResult> UpdateVila(int id, [FromBody] VilaUpdateDto updateVila)
         {
-            if (updateVila == null | id != updateVila.Id )
+            if (updateVila == null || id != updateVila.Id )
             {
                 return BadRequest();
             }
