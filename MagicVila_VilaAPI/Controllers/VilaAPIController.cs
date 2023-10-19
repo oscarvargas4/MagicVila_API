@@ -7,6 +7,7 @@ using MagicVila_VilaAPI.Repository.IRepository;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace MagicVila_VilaAPI.Controllers
 {
@@ -18,21 +19,25 @@ namespace MagicVila_VilaAPI.Controllers
         private readonly ILogging _logger;
         private readonly IVilaRepository _dbVila;
         private readonly IMapper _mapper;
+        protected APIResponse _response;
 
         public VilaAPIController(ILogging logger, IVilaRepository dbVila, IMapper mapper)
         {
             _logger = logger;
             _dbVila = dbVila;
             _mapper = mapper;
+            this._response = new();
         }
 
         [HttpGet]
         [ProducesResponseType(200)]
-        public async Task<ActionResult<IEnumerable<VilaDto>>> GetVilas()
+        public async Task<ActionResult<APIResponse>> GetVilas()
         {
             _logger.Log("Getting all vilas", "");
             IEnumerable<Vila> vilaList = await _dbVila.GetAllAsync();
-            return Ok(_mapper.Map<List<VilaDto>>(vilaList));
+            _response.Result = _mapper.Map<List<VilaDto>>(vilaList);
+            _response.StatusCode = HttpStatusCode.OK;
+            return Ok(_response);
         }
 
         [HttpGet("{id:int}", Name = "GetVila")]
@@ -40,7 +45,7 @@ namespace MagicVila_VilaAPI.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
         // another way: [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<VilaDto>> GetVila(int id)
+        public async Task<ActionResult<APIResponse>> GetVila(int id)
         {
             if (id == 0)
             {
@@ -50,14 +55,16 @@ namespace MagicVila_VilaAPI.Controllers
             var vila = await _dbVila.GetAsync(u => u.Id == id);
             if (vila == null) return NotFound();
             _logger.Log($"Getting vila with id: {id}","");
-            return Ok(_mapper.Map<VilaDto>(vila));
+            _response.Result = _mapper.Map<VilaDto>(vila);
+            _response.StatusCode = HttpStatusCode.OK;
+            return Ok(_response);
         }
 
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<ActionResult<VilaDto>> CreateVila([FromBody] VilaCreateDto createDto)
+        public async Task<ActionResult<APIResponse>> CreateVila([FromBody] VilaCreateDto createDto)
         {
             if (await _dbVila.GetAsync(u => u.Name.ToLower() == createDto.Name.ToLower()) != null)
             {
@@ -65,33 +72,25 @@ namespace MagicVila_VilaAPI.Controllers
                 return BadRequest(ModelState);
             }
             if (createDto == null) return BadRequest(createDto);
-            //if (vilaDto.Id > 0) return BadRequest(vilaDto);
-            Vila model = _mapper.Map<Vila>(createDto); // This line replace what old model does (commented code below)
-            //Vila model = new Vila()
-            //{
-            //    Amenity= createDto.Amenity,
-            //    Details = createDto.Details,
-            //    //Id = createDto.Id,
-            //    ImageUrl = createDto.ImageUrl,
-            //    Name = createDto.Name,
-            //    Occupancy = createDto.Occupancy,
-            //    Rate = createDto.Rate,
-            //    Sqft = createDto.Sqft
-            //};
-            await _dbVila.CreateAsync(model);
-            return CreatedAtRoute("GetVila", new { id = model.Id }, model);
+            Vila vila = _mapper.Map<Vila>(createDto); 
+            await _dbVila.CreateAsync(vila);
+            _response.Result = _mapper.Map<VilaDto>(vila);
+            _response.StatusCode = HttpStatusCode.Created;
+            return CreatedAtRoute("GetVila", new { id = vila.Id }, _response);
         }
 
         [HttpDelete("{id:int}", Name = "DeleteVila")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> DeleteVila(int id)
+        public async Task<ActionResult<APIResponse>> DeleteVila(int id)
         {
             if (id == 0) return BadRequest();
             var vila = await _dbVila.GetAsync(u => u.Id == id);
             if (vila == null) return NotFound();
             await _dbVila.RemoveAsync(vila);
+            _response.StatusCode = HttpStatusCode.NoContent;
+            _response.IsSuccess = true;
             return NoContent();
         }
 
@@ -99,7 +98,7 @@ namespace MagicVila_VilaAPI.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> UpdateVila(int id, [FromBody] VilaUpdateDto updateVila)
+        public async Task<ActionResult<APIResponse>> UpdateVila(int id, [FromBody] VilaUpdateDto updateVila)
         {
             if (updateVila == null || id != updateVila.Id )
             {
@@ -109,7 +108,8 @@ namespace MagicVila_VilaAPI.Controllers
             if (vila == null) return NotFound();
             Vila model = _mapper.Map<Vila>(updateVila);
             await _dbVila.UpdateAsync(model);
-
+            _response.StatusCode = HttpStatusCode.NoContent;
+            _response.IsSuccess = true;
             return NoContent();
         }
 
@@ -117,7 +117,7 @@ namespace MagicVila_VilaAPI.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> UpdatePartialVila(int id, JsonPatchDocument<VilaUpdateDto> patchDto)
+        public async Task<ActionResult<APIResponse>> UpdatePartialVila(int id, JsonPatchDocument<VilaUpdateDto> patchDto)
         {
             // https://jsonpatch.com/
             if (patchDto == null | id == 0) return BadRequest();
@@ -128,6 +128,8 @@ namespace MagicVila_VilaAPI.Controllers
             Vila model = _mapper.Map<Vila>(modelDto);
             if (!ModelState.IsValid) return BadRequest(ModelState);
             await _dbVila.UpdateAsync(model);
+            _response.StatusCode = HttpStatusCode.NoContent;
+            _response.IsSuccess = true;
             return NoContent();
         }
 
