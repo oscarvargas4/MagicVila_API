@@ -2,7 +2,7 @@
 using MagicVila_VilaAPI.Data;
 using MagicVila_VilaAPI.Logging;
 using MagicVila_VilaAPI.Models;
-using MagicVila_VilaAPI.Models.Dto;
+using MagicVila_VilaAPI.Models.Dto.VilaDto;
 using MagicVila_VilaAPI.Repository.IRepository;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;

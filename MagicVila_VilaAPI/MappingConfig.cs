@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using MagicVila_VilaAPI.Models;
-using MagicVila_VilaAPI.Models.Dto;
+using MagicVila_VilaAPI.Models.Dto.VilaDto;
 
 namespace MagicVila_VilaAPI
 {
