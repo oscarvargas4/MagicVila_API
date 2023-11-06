@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MagicVila_VilaAPI.Models;
 using MagicVila_VilaAPI.Models.Dto.VilaDto;
+using MagicVila_VilaAPI.Models.Dto.VilaNumberDto;
 
 namespace MagicVila_VilaAPI
 {
@@ -8,14 +9,13 @@ namespace MagicVila_VilaAPI
     {
         public MappingConfig()
         {
-            CreateMap<Vila, VilaDto>();
-            CreateMap<VilaDto, Vila>();
+            CreateMap<Vila, VilaDto>().ReverseMap();
+            CreateMap<Vila, VilaCreateDto>().ReverseMap();
+            CreateMap<Vila, VilaUpdateDto>().ReverseMap();
 
-            CreateMap<Vila, VilaCreateDto>();
-            CreateMap<VilaCreateDto, Vila>();
-
-            CreateMap<Vila, VilaUpdateDto>();
-            CreateMap<VilaUpdateDto, Vila>();
+            CreateMap<VilaNumber, VilaNumberDto>().ReverseMap();
+            CreateMap<VilaNumber, VilaNumberCreateDto>().ReverseMap();
+            CreateMap<VilaNumber, VilaNumberUpdateDto>().ReverseMap();
         }
     }
 }
