@@ -141,7 +141,7 @@ namespace MagicVilaVilaAPI.Migrations
                     b.Property<int>("VilaNo")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreateDate")
+                    b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("SpecialDetails")
