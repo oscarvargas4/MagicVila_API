@@ -122,7 +122,7 @@ namespace MagicVila_VilaAPI.Controllers
         }
 
         [HttpDelete("{id:int}", Name = "DeleteVilaNumber")]
-        [ProducesResponseType(204)]
+        [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public async Task<ActionResult<APIResponse>> DeleteVilaNumber(int id)
@@ -153,7 +153,7 @@ namespace MagicVila_VilaAPI.Controllers
         }
 
         [HttpPut("{id:int}", Name = "UpdateVilaNumber")]
-        [ProducesResponseType(204)]
+        [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public async Task<ActionResult<APIResponse>> UpdateVilaNumber(int id, [FromBody] VilaNumberDto updateVila)
@@ -187,7 +187,7 @@ namespace MagicVila_VilaAPI.Controllers
         }
 
         [HttpPatch("{id:int}", Name = "UpdatePartialVilaNumber")]
-        [ProducesResponseType(204)]
+        [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public async Task<ActionResult<APIResponse>> UpdatePartialVilaNumber(int id, JsonPatchDocument<VilaNumberUpdateDto> patchDto)
