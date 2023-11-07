@@ -4,6 +4,7 @@ using MagicVila_VilaAPI.Logging;
 using MagicVila_VilaAPI.Models;
 using MagicVila_VilaAPI.Models.Dto.VilaNumberDto;
 using MagicVila_VilaAPI.Repository.IRepository;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,13 +19,15 @@ namespace MagicVila_VilaAPI.Controllers
     {
         private readonly ILogging _logger;
         private readonly IVilaNumberRepository _dbVilaNumber;
+        private readonly IVilaRepository _dbVila;
         private readonly IMapper _mapper;
         protected APIResponse _response;
 
-        public VilaNumberAPIController(ILogging logger, IVilaNumberRepository dbVilaNumber, IMapper mapper)
+        public VilaNumberAPIController(ILogging logger, IVilaNumberRepository dbVilaNumber, IVilaRepository dbVila, IMapper mapper)
         {
             _logger = logger;
             _dbVilaNumber = dbVilaNumber;
+            _dbVila = dbVila;
             _mapper = mapper;
             this._response = new();
         }
@@ -48,7 +51,7 @@ namespace MagicVila_VilaAPI.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return BadRequest(_response);
         }
 
         [HttpGet("{id:int}", Name = "GetVilaNumber")]
@@ -83,11 +86,10 @@ namespace MagicVila_VilaAPI.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return BadRequest(_response);
         }
 
         [HttpPost]
-        [ProducesResponseType(200)]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         public async Task<ActionResult<APIResponse>> CreateVilaNumber([FromBody] VilaNumberCreateDto createDto)
@@ -96,9 +98,16 @@ namespace MagicVila_VilaAPI.Controllers
             {
                 if (await _dbVilaNumber.GetAsync(u => u.VilaNo == createDto.VilaNo) != null)
                 {
-                    ModelState.AddModelError("CustomError", "VilaNumber already exists!");
+                    ModelState.AddModelError("CustomError", "VilaNumber already exists");
                     return BadRequest(ModelState);
                 }
+
+                if (await _dbVila.GetAsync(u => u.Id == createDto.VilaID) == null)
+                {
+                    ModelState.AddModelError("CustomError", $"No Vila with ID: {createDto.VilaID}");
+                    return BadRequest(ModelState);
+                }
+
                 if (createDto == null)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
@@ -110,7 +119,7 @@ namespace MagicVila_VilaAPI.Controllers
                 _response.Result = _mapper.Map<VilaNumberDto>(VilaNumber);
                 _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.Created;
-                return CreatedAtRoute("GetVila", new { id = VilaNumber.VilaNo }, _response);
+                return CreatedAtRoute("GetVilaNumber", new { id = VilaNumber.VilaNo }, _response);
             }
             catch (Exception ex)
             {
@@ -118,7 +127,7 @@ namespace MagicVila_VilaAPI.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return BadRequest(_response);
         }
 
         [HttpDelete("{id:int}", Name = "DeleteVilaNumber")]
@@ -129,19 +138,21 @@ namespace MagicVila_VilaAPI.Controllers
         {
             try
             {
-                if (id == 0) {
+                if (id == 0)
+                {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
                 var VilaNumber = await _dbVilaNumber.GetAsync(u => u.VilaNo == id);
-                if (VilaNumber == null) {
+                if (VilaNumber == null)
+                {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
                 await _dbVilaNumber.RemoveAsync(VilaNumber);
-                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
-                return NoContent();
+                return Ok(_response);
             }
             catch (Exception ex)
             {
@@ -149,7 +160,7 @@ namespace MagicVila_VilaAPI.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return BadRequest(_response);
         }
 
         [HttpPut("{id:int}", Name = "UpdateVilaNumber")]
@@ -165,6 +176,13 @@ namespace MagicVila_VilaAPI.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
+
+                if (await _dbVila.GetAsync(u => u.Id == updateVila.VilaID) == null)
+                {
+                    ModelState.AddModelError("CustomError", $"No Vila with ID: {updateVila.VilaID}");
+                    return BadRequest(ModelState);
+                }
+
                 var VilaNumber = await _dbVilaNumber.GetAsync(u => u.VilaNo == id, tracked: false);
                 if (VilaNumber == null)
                 {
@@ -173,9 +191,9 @@ namespace MagicVila_VilaAPI.Controllers
                 }
                 VilaNumber model = _mapper.Map<VilaNumber>(updateVila);
                 await _dbVilaNumber.UpdateAsync(model);
-                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.StatusCode = HttpStatusCode.Created;
                 _response.IsSuccess = true;
-                return NoContent();
+                return CreatedAtRoute("GetVilaNumber", new { id = VilaNumber.VilaNo }, _response); ;
             }
             catch (Exception ex)
             {
@@ -183,7 +201,7 @@ namespace MagicVila_VilaAPI.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return BadRequest(_response);
         }
 
         [HttpPatch("{id:int}", Name = "UpdatePartialVilaNumber")]
