@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32811.315
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicVila_VilaAPI", "MagicVila_VilaAPI\MagicVila_VilaAPI.csproj", "{345C57B4-7696-4780-80AA-FB6D9084A2EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagicVila_VilaAPI", "MagicVila_VilaAPI\MagicVila_VilaAPI.csproj", "{345C57B4-7696-4780-80AA-FB6D9084A2EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicVila_Web", "MagicVila_Web\MagicVila_Web.csproj", "{26132472-A6E7-47AA-8C34-F516C9C8D4B3}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{2A82CF03-D73A-4A02-9FB2-8E4E64E7D299}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TEsting", "TEsting\TEsting.csproj", "{E072CB69-BDBB-4AEB-B5FC-5D0492F3E469}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +21,18 @@ Global
 		{345C57B4-7696-4780-80AA-FB6D9084A2EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{345C57B4-7696-4780-80AA-FB6D9084A2EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{345C57B4-7696-4780-80AA-FB6D9084A2EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26132472-A6E7-47AA-8C34-F516C9C8D4B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26132472-A6E7-47AA-8C34-F516C9C8D4B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26132472-A6E7-47AA-8C34-F516C9C8D4B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26132472-A6E7-47AA-8C34-F516C9C8D4B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A82CF03-D73A-4A02-9FB2-8E4E64E7D299}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A82CF03-D73A-4A02-9FB2-8E4E64E7D299}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A82CF03-D73A-4A02-9FB2-8E4E64E7D299}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A82CF03-D73A-4A02-9FB2-8E4E64E7D299}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E072CB69-BDBB-4AEB-B5FC-5D0492F3E469}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E072CB69-BDBB-4AEB-B5FC-5D0492F3E469}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E072CB69-BDBB-4AEB-B5FC-5D0492F3E469}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E072CB69-BDBB-4AEB-B5FC-5D0492F3E469}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
