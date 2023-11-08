@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  magicvila_web:
+    image: ${DOCKER_REGISTRY-}magicvilaweb
+    build:
+      context: .
+      dockerfile: MagicVila_Web/Dockerfile
+
+  magicvila_vilaapi:
+    image: ${DOCKER_REGISTRY-}magicvilavilaapi
+    build:
+      context: .
+      dockerfile: MagicVila_VilaAPI/Dockerfile
+
