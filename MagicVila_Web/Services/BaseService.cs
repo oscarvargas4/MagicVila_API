@@ -22,7 +22,7 @@ namespace MagicVila_Web.Services
             {
                 HttpClient client = _httpClient.CreateClient("MagicAPI");
                 HttpRequestMessage message = new HttpRequestMessage();
-                message.Headers.Add("Content-Type", "application/json");
+                message.Headers.Add("Accept", "application/json");
                 message.RequestUri = new Uri(apiRequest.Url);
                 if(apiRequest.Data != null)
                 {
