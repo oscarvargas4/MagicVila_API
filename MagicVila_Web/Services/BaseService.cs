@@ -49,11 +49,13 @@ namespace MagicVila_Web.Services
 
                 apiResponse = await client.SendAsync(message);
                 var apiContent = await apiResponse.Content.ReadAsStringAsync();
+                Console.WriteLine(apiContent);
                 var APIResponse = JsonConvert.DeserializeObject<T>(apiContent);
                 return APIResponse;
             }
             catch(Exception e)
             {
+                Console.WriteLine(e.ToString());
                 var dto = new APIResponse
                 {
                     ErrorMessages = new List<string> { Convert.ToString(e.Message) },
