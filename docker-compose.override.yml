@@ -2,25 +2,30 @@ version: '3.4'
 
 services:
   magicvila_web:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
+    hostname: magicvila_web
     ports:
-      - "80"
-      - "443"
+      - "8080:80"
+      - "8081:443"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "https://+;http://+"
+      ASPNETCORE_HTTPS_PORT: "8081"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "magicvilaonetwo"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "/etc/ssl/certs/MagicVila_Web.pfx"
     volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ${APPDATA}\Microsoft\UserSecrets\:/etc/ssl/usersecrets/
+      - ${USERPROFILE}\.aspnet\https\:/etc/ssl/certs/
   magicvila_vilaapi:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=$CREDENTIAL_PLACEHOLDER$
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    hostname: magicvila_vilaapi
     ports:
-      - "80"
-      - "443"
+      - "8082:80"
+      - "8083:443"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "https://+;http://+"
+      ASPNETCORE_HTTPS_PORT: "8083"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "magicvilaonetwo"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "/etc/ssl/certs/MagicVila_VilaAPI.pfx"    
     volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-      - ~/.aspnet/https:/https:ro
+      - ${APPDATA}\Microsoft\UserSecrets\:/etc/ssl/usersecrets/
+      - ${USERPROFILE}\.aspnet\https\:/etc/ssl/certs/
