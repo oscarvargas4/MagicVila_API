@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MagicVila_Web.Models.Dto.VilaDto
+namespace MagicVila_Web.Models.Dto
 {
     public class VilaCreateDto
     {

@@ -1,4 +1,4 @@
-﻿using MagicVila_Web.Models.Dto.VilaNumberDto;
+﻿using MagicVila_Web.Models.Dto;
 
 namespace MagicVila_Web.Services.IServices
 {

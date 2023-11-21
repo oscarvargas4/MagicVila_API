@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using MagicVila_Web.Models;
-using MagicVila_Web.Models.Dto.VilaDto;
+using MagicVila_Web.Models.Dto;
 using MagicVila_Web.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
