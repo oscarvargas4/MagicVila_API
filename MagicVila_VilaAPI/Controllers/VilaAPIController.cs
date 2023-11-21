@@ -155,7 +155,7 @@ namespace MagicVila_VilaAPI.Controllers
         }
 
         [HttpPut("{id:int}", Name = "UpdateVila")]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public async Task<ActionResult<APIResponse>> UpdateVila(int id, [FromBody] VilaUpdateDto updateVila)
