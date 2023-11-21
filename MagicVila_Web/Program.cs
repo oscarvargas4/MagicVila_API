@@ -11,6 +11,9 @@ builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddHttpClient<IVilaService, VilaService>();
 builder.Services.AddScoped<IVilaService, VilaService>();
 
+builder.Services.AddHttpClient<IVilaNumberService, VilaNumberService>();
+builder.Services.AddScoped<IVilaNumberService, VilaNumberService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

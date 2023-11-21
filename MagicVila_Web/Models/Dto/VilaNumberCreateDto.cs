@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MagicVila_Web.Models.Dto.VilaNumberDto
+namespace MagicVila_Web.Models.Dto
 {
-    public class VilaNumberDto
+    public class VilaNumberCreateDto
     {
         [Required]
         public int VilaNo { get; set; }
