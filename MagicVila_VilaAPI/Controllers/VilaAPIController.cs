@@ -4,6 +4,7 @@ using MagicVila_VilaAPI.Logging;
 using MagicVila_VilaAPI.Models;
 using MagicVila_VilaAPI.Models.Dto.VilaDto;
 using MagicVila_VilaAPI.Repository.IRepository;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -142,7 +143,7 @@ namespace MagicVila_VilaAPI.Controllers
                 await _dbVila.RemoveAsync(vila);
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.IsSuccess = true;
-                return NoContent();
+                return Ok(_response);
             }
             catch (Exception ex)
             {
@@ -150,11 +151,11 @@ namespace MagicVila_VilaAPI.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return NoContent();
         }
 
         [HttpPut("{id:int}", Name = "UpdateVila")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public async Task<ActionResult<APIResponse>> UpdateVila(int id, [FromBody] VilaUpdateDto updateVila)
@@ -174,9 +175,9 @@ namespace MagicVila_VilaAPI.Controllers
                 }
                 Vila model = _mapper.Map<Vila>(updateVila);
                 await _dbVila.UpdateAsync(model);
-                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.StatusCode = HttpStatusCode.Created;
                 _response.IsSuccess = true;
-                return NoContent();
+                return Ok(_response); ;
             }
             catch (Exception ex)
             {
@@ -184,7 +185,7 @@ namespace MagicVila_VilaAPI.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return NoContent();
         }
 
         [HttpPatch("{id:int}", Name = "UpdatePartialVila")]
@@ -206,7 +207,7 @@ namespace MagicVila_VilaAPI.Controllers
                 await _dbVila.UpdateAsync(model);
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.IsSuccess = true;
-                return NoContent();
+                return Ok(_response);
             }
             catch (Exception ex)
             {
@@ -214,7 +215,7 @@ namespace MagicVila_VilaAPI.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return NoContent();
         }
 
     }
