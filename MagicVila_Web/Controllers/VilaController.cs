@@ -4,7 +4,6 @@ using MagicVila_Web.Models.Dto.VilaDto;
 using MagicVila_Web.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace MagicVila_Web.Controllers
 {
@@ -45,6 +44,55 @@ namespace MagicVila_Web.Controllers
                 {
                     return RedirectToAction(nameof(IndexVila));
                 }
+            }
+            return View(model);
+        }
+
+        public async Task<IActionResult> UpdateVila(int vilaId)
+        {
+            var response = await _vilaService.GetAsync<APIResponse>(vilaId);
+            if (response != null && response.IsSuccess)
+            {
+                VilaDto model = JsonConvert.DeserializeObject<VilaDto>(Convert.ToString(response.Result));
+                return View(_mapper.Map<VilaUpdateDto>(model));
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateVila(VilaUpdateDto model)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = await _vilaService.UpdateAsync<APIResponse>(model);
+                if (response != null && response.IsSuccess)
+                {
+                    return RedirectToAction(nameof(IndexVila));
+                }
+            }
+            return View(model);
+        }
+
+        public async Task<IActionResult> DeleteVila(int vilaId)
+        {
+            var response = await _vilaService.GetAsync<APIResponse>(vilaId);
+            if (response != null && response.IsSuccess)
+            {
+                VilaDto model = JsonConvert.DeserializeObject<VilaDto>(Convert.ToString(response.Result));
+                return View(model);
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteVila(VilaDto model)
+        {
+            var response = await _vilaService.DeleteAsync<APIResponse>(model.Id);
+            if (response != null && response.IsSuccess)
+            {
+                return RedirectToAction(nameof(IndexVila));
             }
             return View(model);
         }
