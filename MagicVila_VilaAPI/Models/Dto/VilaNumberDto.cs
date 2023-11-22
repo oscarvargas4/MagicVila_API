@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MagicVila_VilaAPI.Models.Dto.VilaNumberDto
+namespace MagicVila_VilaAPI.Models.Dto
 {
     public class VilaNumberDto
     {
@@ -9,5 +9,6 @@ namespace MagicVila_VilaAPI.Models.Dto.VilaNumberDto
         [Required]
         public int VilaID { get; set; }
         public string SpecialDetails { get; set; }
+        public VilaDto Vila { get; set; }
     }
 }

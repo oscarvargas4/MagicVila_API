@@ -2,7 +2,7 @@
 using MagicVila_VilaAPI.Data;
 using MagicVila_VilaAPI.Logging;
 using MagicVila_VilaAPI.Models;
-using MagicVila_VilaAPI.Models.Dto.VilaNumberDto;
+using MagicVila_VilaAPI.Models.Dto;
 using MagicVila_VilaAPI.Repository.IRepository;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.JsonPatch;
@@ -39,7 +39,7 @@ namespace MagicVila_VilaAPI.Controllers
             try
             {
                 _logger.Log("Getting all vilas", "");
-                IEnumerable<VilaNumber> vilaList = await _dbVilaNumber.GetAllAsync();
+                IEnumerable<VilaNumber> vilaList = await _dbVilaNumber.GetAllAsync(includeProperties:"Vila");
                 _response.Result = _mapper.Map<List<VilaNumberDto>>(vilaList);
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
