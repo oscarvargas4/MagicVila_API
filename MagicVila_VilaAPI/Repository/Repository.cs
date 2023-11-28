@@ -13,7 +13,7 @@ namespace MagicVila_VilaAPI.Repository
         public Repository(ApplicationDbContext db)
         {
             _db = db;
-            _db.VilaNumbers.Include(u => u.Vila).ToList();
+            //_db.VilaNumbers.Include(u => u.Vila).ToList();
             this.dbSet = _db.Set<T>();
         }
         public async Task CreateAsync(T entity)
