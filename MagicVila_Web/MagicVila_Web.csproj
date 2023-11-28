@@ -19,9 +19,4 @@
     <ProjectReference Include="..\..\MagicVila_Utility\MagicVila_Utility.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\Dto\VilaDto\" />
-    <Folder Include="Models\Dto\VilaNumberDto\" />
-  </ItemGroup>
-
 </Project>
