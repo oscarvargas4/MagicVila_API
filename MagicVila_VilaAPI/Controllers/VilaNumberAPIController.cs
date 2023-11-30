@@ -98,13 +98,13 @@ namespace MagicVila_VilaAPI.Controllers
             {
                 if (await _dbVilaNumber.GetAsync(u => u.VilaNo == createDto.VilaNo) != null)
                 {
-                    ModelState.AddModelError("CustomError", "VilaNumber already exists");
+                    ModelState.AddModelError("ErrorMessages", "VilaNumber already exists");
                     return BadRequest(ModelState);
                 }
 
                 if (await _dbVila.GetAsync(u => u.Id == createDto.VilaID) == null)
                 {
-                    ModelState.AddModelError("CustomError", $"No Vila with ID: {createDto.VilaID}");
+                    ModelState.AddModelError("ErrorMessages", $"No Vila with ID: {createDto.VilaID}");
                     return BadRequest(ModelState);
                 }
 
@@ -179,7 +179,7 @@ namespace MagicVila_VilaAPI.Controllers
 
                 if (await _dbVila.GetAsync(u => u.Id == updateVila.VilaID) == null)
                 {
-                    ModelState.AddModelError("CustomError", $"No Vila with ID: {updateVila.VilaID}");
+                    ModelState.AddModelError("ErrorMessages", $"No Vila with ID: {updateVila.VilaID}");
                     return BadRequest(ModelState);
                 }
 

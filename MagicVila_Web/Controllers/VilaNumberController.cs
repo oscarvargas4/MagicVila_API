@@ -58,6 +58,16 @@ namespace MagicVila_Web.Controllers
                     return RedirectToAction(nameof(IndexVilaNumber));
                 }
             }
+
+            var resp = await _vilaService.GetAllAsync<APIResponse>();
+            if (resp != null && resp.IsSuccess)
+            {
+                model.VilaList = JsonConvert.DeserializeObject<List<VilaDto>>(Convert.ToString(resp.Result)).Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                });
+            }
             return View(model);
         }
 
