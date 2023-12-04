@@ -2,7 +2,6 @@
 using MagicVila_Web.Models;
 using MagicVila_Web.Models.Dto;
 using MagicVila_Web.Models.ViewModel;
-using MagicVila_Web.Services;
 using MagicVila_Web.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -78,53 +77,96 @@ namespace MagicVila_Web.Controllers
             return View(model);
         }
 
-        //public async Task<IActionResult> UpdateVila(int vilaId)
-        //{
-        //    var response = await _vilaNumberService.GetAsync<APIResponse>(vilaId);
-        //    if (response != null && response.IsSuccess)
-        //    {
-        //        VilaNumberDto model = JsonConvert.DeserializeObject<VilaNumberDto>(Convert.ToString(response.Result));
-        //        return View(_mapper.Map<VilaUpdateDto>(model));
-        //    }
-        //    return NotFound();
-        //}
+        public async Task<IActionResult> UpdateVilaNumber(int vilaId)
+        {
+            VilaNumberUpdateViewModel vilaNumberViewModel = new();
+            var response = await _vilaNumberService.GetAsync<APIResponse>(vilaId);
+            if (response != null && response.IsSuccess)
+            {
+                VilaNumberDto model = JsonConvert.DeserializeObject<VilaNumberDto>(Convert.ToString(response.Result));
+                vilaNumberViewModel.VilaNumber = _mapper.Map<VilaNumberUpdateDto>(model);
+            }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> UpdateVila(VilaNumberUpdateDto model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var response = await _vilaNumberService.UpdateAsync<APIResponse>(model);
-        //        if (response != null && response.IsSuccess)
-        //        {
-        //            return RedirectToAction(nameof(IndexVilaNumber));
-        //        }
-        //    }
-        //    return View(model);
-        //}
+            response = await _vilaService.GetAllAsync<APIResponse>();
+            if (response != null && response.IsSuccess)
+            {
+                vilaNumberViewModel.VilaList = JsonConvert.DeserializeObject<List<VilaDto>>(Convert.ToString(response.Result)).Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                });
+                return View(vilaNumberViewModel);
+            }
 
-        //public async Task<IActionResult> DeleteVila(int vilaId)
-        //{
-        //    var response = await _vilaNumberService.GetAsync<APIResponse>(vilaId);
-        //    if (response != null && response.IsSuccess)
-        //    {
-        //        VilaNumberDto model = JsonConvert.DeserializeObject<VilaNumberDto>(Convert.ToString(response.Result));
-        //        return View(model);
-        //    }
-        //    return NotFound();
-        //}
+            return NotFound();
+        }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteVila(VilaNumberDto model)
-        //{
-        //    var response = await _vilaNumberService.DeleteAsync<APIResponse>(model.Id);
-        //    if (response != null && response.IsSuccess)
-        //    {
-        //        return RedirectToAction(nameof(IndexVilaNumber));
-        //    }
-        //    return View(model);
-        //}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateVilaNumber(VilaNumberUpdateViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = await _vilaNumberService.UpdateAsync<APIResponse>(model.VilaNumber);
+                if (response != null && response.IsSuccess)
+                {
+                    return RedirectToAction(nameof(IndexVilaNumber));
+                }
+                else
+                {
+                    if (response.ErrorMessages.Count > 0)
+                    {
+                        ModelState.AddModelError("ErrorMessages", response.ErrorMessages.FirstOrDefault());
+                    }
+                }
+            }
+
+            var resp = await _vilaService.GetAllAsync<APIResponse>();
+            if (resp != null && resp.IsSuccess)
+            {
+                model.VilaList = JsonConvert.DeserializeObject<List<VilaDto>>(Convert.ToString(resp.Result)).Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                });
+            }
+            return View(model);
+        }
+
+        public async Task<IActionResult> DeleteVilaNumber(int vilaId)
+        {
+            VilaNumberUpdateViewModel vilaNumberViewModel = new();
+            var response = await _vilaNumberService.GetAsync<APIResponse>(vilaId);
+            if (response != null && response.IsSuccess)
+            {
+                VilaNumberDto model = JsonConvert.DeserializeObject<VilaNumberDto>(Convert.ToString(response.Result));
+                vilaNumberViewModel.VilaNumber = _mapper.Map<VilaNumberUpdateDto>(model);
+            }
+
+            response = await _vilaService.GetAllAsync<APIResponse>();
+            if (response != null && response.IsSuccess)
+            {
+                vilaNumberViewModel.VilaList = JsonConvert.DeserializeObject<List<VilaDto>>(Convert.ToString(response.Result)).Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                });
+                return View(vilaNumberViewModel);
+            }
+
+            return NotFound();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteVilaNumber(VilaNumberDeleteViewModel model)
+        {
+            var response = await _vilaNumberService.DeleteAsync<APIResponse>(model.VilaNumber.VilaNo);
+            if (response != null && response.IsSuccess)
+            {
+                return RedirectToAction(nameof(IndexVilaNumber));
+            }
+            return View(model);
+        }
     }
 }
