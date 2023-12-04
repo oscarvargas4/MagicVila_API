@@ -57,6 +57,23 @@ namespace MagicVila_Web.Controllers
                 {
                     return RedirectToAction(nameof(IndexVilaNumber));
                 }
+                else
+                {
+                    if(response.ErrorMessages.Count > 0)
+                    {
+                        ModelState.AddModelError("ErrorMessages", response.ErrorMessages.FirstOrDefault());
+                    }
+                }
+            }
+
+            var resp = await _vilaService.GetAllAsync<APIResponse>();
+            if (resp != null && resp.IsSuccess)
+            {
+                model.VilaList = JsonConvert.DeserializeObject<List<VilaDto>>(Convert.ToString(resp.Result)).Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                });
             }
             return View(model);
         }
