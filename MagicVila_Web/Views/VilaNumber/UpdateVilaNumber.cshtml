@@ -1,0 +1,56 @@
+﻿@model MagicVila_Web.Models.ViewModel.VilaNumberUpdateViewModel
+
+<form asp-action="UpdateVilaNumber">
+    <br />
+    <div class="container border p-3">
+        <h1 class="text-primary">Update Vila</h1>
+        <hr />
+        <input hidden asp-for="VilaNumber.VilaNo" />
+        <div class="row">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="col-2">
+                <label asp-for="VilaNumber.VilaNo" class="control-label pt-2" style="font-size:20px;"></label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="VilaNumber.VilaNo" disabled class="form-control" />
+                <span asp-validation-for="VilaNumber.VilaNo" class="text-danger"></span>
+            </div>
+
+
+            <div class="col-2">
+                <label asp-for="VilaNumber.VilaID" class="control-label pt-2" style="font-size:20px;"></label>
+            </div>
+            <div class="col-10 pb-3">
+                <select asp-for="VilaNumber.VilaID" class="form-select" asp-items="@Model.VilaList">
+                    <option disabled selected>--Select Vila--</option>
+                </select>
+                <span asp-validation-for="VilaNumber.VilaID" class="text-danger"></span>
+            </div>
+
+
+            <div class="col-2">
+                <label asp-for="VilaNumber.SpecialDetails" class="control-label pt-2" style="font-size:20px;"></label>
+            </div>
+            <div class="col-10 pb-3">
+                <textarea asp-for="VilaNumber.SpecialDetails" class="form-control" rows="5"></textarea>
+                <span asp-validation-for="VilaNumber.SpecialDetails" class="text-danger"></span>
+            </div>
+
+
+
+
+            <div class="col-5 offset-2">
+                <a asp-action="IndexVilaNumber" asp-controller="VilaNumber" class="btn-primary btn form-control">Back to List</a>
+            </div>
+            <div class="col-5">
+                <input type="submit" value="Update" class="btn btn-success form-control" />
+            </div>
+
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

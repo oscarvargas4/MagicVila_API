@@ -77,10 +77,10 @@ namespace MagicVila_Web.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> UpdateVilaNumber(int vilaId)
+        public async Task<IActionResult> UpdateVilaNumber(int vilaNo)
         {
             VilaNumberUpdateViewModel vilaNumberViewModel = new();
-            var response = await _vilaNumberService.GetAsync<APIResponse>(vilaId);
+            var response = await _vilaNumberService.GetAsync<APIResponse>(vilaNo);
             if (response != null && response.IsSuccess)
             {
                 VilaNumberDto model = JsonConvert.DeserializeObject<VilaNumberDto>(Convert.ToString(response.Result));
@@ -133,14 +133,14 @@ namespace MagicVila_Web.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> DeleteVilaNumber(int vilaId)
+        public async Task<IActionResult> DeleteVilaNumber(int vilaNo)
         {
-            VilaNumberUpdateViewModel vilaNumberViewModel = new();
-            var response = await _vilaNumberService.GetAsync<APIResponse>(vilaId);
+            VilaNumberDeleteViewModel vilaNumberViewModel = new();
+            var response = await _vilaNumberService.GetAsync<APIResponse>(vilaNo);
             if (response != null && response.IsSuccess)
             {
                 VilaNumberDto model = JsonConvert.DeserializeObject<VilaNumberDto>(Convert.ToString(response.Result));
-                vilaNumberViewModel.VilaNumber = _mapper.Map<VilaNumberUpdateDto>(model);
+                vilaNumberViewModel.VilaNumber = model;
             }
 
             response = await _vilaService.GetAllAsync<APIResponse>();
