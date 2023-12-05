@@ -54,6 +54,7 @@ namespace MagicVila_Web.Controllers
                 var response = await _vilaNumberService.CreateAsync<APIResponse>(model.VilaNumber);
                 if (response != null && response.IsSuccess)
                 {
+                    TempData["success"] = "Vila Number created successfully";
                     return RedirectToAction(nameof(IndexVilaNumber));
                 }
                 else
@@ -74,6 +75,7 @@ namespace MagicVila_Web.Controllers
                     Value = i.Id.ToString()
                 });
             }
+            TempData["error"] = "Error encountered";
             return View(model);
         }
 
@@ -97,7 +99,6 @@ namespace MagicVila_Web.Controllers
                 });
                 return View(vilaNumberViewModel);
             }
-
             return NotFound();
         }
 
@@ -110,6 +111,7 @@ namespace MagicVila_Web.Controllers
                 var response = await _vilaNumberService.UpdateAsync<APIResponse>(model.VilaNumber);
                 if (response != null && response.IsSuccess)
                 {
+                    TempData["success"] = "Vila Number updated successfully";
                     return RedirectToAction(nameof(IndexVilaNumber));
                 }
                 else
@@ -130,6 +132,7 @@ namespace MagicVila_Web.Controllers
                     Value = i.Id.ToString()
                 });
             }
+            TempData["error"] = "Error encountered";
             return View(model);
         }
 
@@ -164,8 +167,11 @@ namespace MagicVila_Web.Controllers
             var response = await _vilaNumberService.DeleteAsync<APIResponse>(model.VilaNumber.VilaNo);
             if (response != null && response.IsSuccess)
             {
+
+                TempData["success"] = "Vila Number deleted successfully";
                 return RedirectToAction(nameof(IndexVilaNumber));
             }
+            TempData["error"] = "Error encountered";
             return View(model);
         }
     }
