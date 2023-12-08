@@ -16,17 +16,38 @@ namespace MagicVila_VilaAPI.Repository
 
         public bool IsUniqueUser(string username)
         {
-            throw new NotImplementedException();
+            var user = _db.LocalUsers.FirstOrDefault(x => x.UserName == username);
+            if (user == null)
+            {
+                return true;
+            }
+            return false;
         }
 
-        public Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
+        public async Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
         {
             throw new NotImplementedException();
         }
 
-        public Task<LocalUser> Register(RegistrationRequestDto registrationRequestDto)
+        public async Task<LocalUser> Register(RegistrationRequestDto registrationRequestDto)
         {
-            throw new NotImplementedException();
+            var isUnique = IsUniqueUser(registrationRequestDto.UserName);
+            if(isUnique == false)
+            {
+                return null;
+            }
+            LocalUser user = new LocalUser()
+            {
+                UserName = registrationRequestDto.UserName,
+                Password = registrationRequestDto.Password,
+                Name = registrationRequestDto.Name,
+                Role = registrationRequestDto.Role,
+            };
+
+            _db.LocalUsers.Add(user);
+            await _db.SaveChangesAsync();
+            user.Password = "";
+            return user;
         }
     }
 }
