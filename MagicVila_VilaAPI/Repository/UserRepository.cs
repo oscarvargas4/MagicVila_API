@@ -8,10 +8,12 @@ namespace MagicVila_VilaAPI.Repository
     public class UserRepository : IUserRepository
     {
         private readonly ApplicationDbContext _db;
+        private string secretKey;
 
-        public UserRepository(ApplicationDbContext db)
+        public UserRepository(ApplicationDbContext db, IConfiguration configuration)
         {
             _db = db;
+            secretKey = configuration.GetValue<string>("ApiSettings:Secret");
         }
 
         public bool IsUniqueUser(string username)
@@ -26,7 +28,14 @@ namespace MagicVila_VilaAPI.Repository
 
         public async Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
         {
-            throw new NotImplementedException();
+            var user = _db.LocalUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDto.UserName.ToLower() && u.Password == loginRequestDto.Password);
+
+            if ( (user == null))
+            {
+                return null;
+            }
+
+            //If user found, generate JWT Token
         }
 
         public async Task<LocalUser> Register(RegistrationRequestDto registrationRequestDto)
