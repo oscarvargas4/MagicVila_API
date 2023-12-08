@@ -34,9 +34,13 @@ namespace MagicVila_VilaAPI.Repository
         {
             var user = _db.LocalUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDto.UserName.ToLower() && u.Password == loginRequestDto.Password);
 
-            if ( (user == null))
+            if (user == null)
             {
-                return null;
+                return new LoginResponseDto()
+                {
+                    Token = "",
+                    User = null
+                };
             }
 
             //If user found, generate JWT Token
@@ -65,11 +69,6 @@ namespace MagicVila_VilaAPI.Repository
 
         public async Task<LocalUser> Register(RegistrationRequestDto registrationRequestDto)
         {
-            var isUnique = IsUniqueUser(registrationRequestDto.UserName);
-            if(isUnique == false)
-            {
-                return null;
-            }
             LocalUser user = new LocalUser()
             {
                 UserName = registrationRequestDto.UserName,
