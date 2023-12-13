@@ -4,6 +4,7 @@ using MagicVila_VilaAPI.Logging;
 using MagicVila_VilaAPI.Models;
 using MagicVila_VilaAPI.Models.Dto;
 using MagicVila_VilaAPI.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +32,7 @@ namespace MagicVila_VilaAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [ProducesResponseType(200)]
         public async Task<ActionResult<APIResponse>> GetVilas()
         {
@@ -53,6 +55,7 @@ namespace MagicVila_VilaAPI.Controllers
         }
 
         [HttpGet("{id:int}", Name = "GetVila")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
@@ -89,6 +92,7 @@ namespace MagicVila_VilaAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(200)]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
@@ -124,6 +128,7 @@ namespace MagicVila_VilaAPI.Controllers
         }
 
         [HttpDelete("{id:int}", Name = "DeleteVila")]
+        [Authorize(Roles = "CUSTOM")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
