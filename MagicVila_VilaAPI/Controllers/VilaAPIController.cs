@@ -34,6 +34,8 @@ namespace MagicVila_VilaAPI.Controllers
         [HttpGet]
         [Authorize]
         [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
         public async Task<ActionResult<APIResponse>> GetVilas()
         {
             try
@@ -59,6 +61,8 @@ namespace MagicVila_VilaAPI.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
         // another way: [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<APIResponse>> GetVila(int id)
         {
@@ -96,6 +100,8 @@ namespace MagicVila_VilaAPI.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
         public async Task<ActionResult<APIResponse>> CreateVila([FromBody] VilaCreateDto createDto)
         {
             try
@@ -131,6 +137,8 @@ namespace MagicVila_VilaAPI.Controllers
         [Authorize(Roles = "CUSTOM")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
         [ProducesResponseType(404)]
         public async Task<ActionResult<APIResponse>> DeleteVila(int id)
         {
