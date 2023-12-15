@@ -1,5 +1,4 @@
-﻿using MagicVila_Web.Models;
-using MagicVila_Web.Models.Dto;
+﻿using MagicVila_Web.Models.Dto;
 
 namespace MagicVila_Web.Services.IServices
 {
