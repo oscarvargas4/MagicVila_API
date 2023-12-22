@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MagicVila_Utility;
 using MagicVila_Web.Models;
 using MagicVila_Web.Models.Dto;
 using MagicVila_Web.Services.IServices;
@@ -21,7 +22,7 @@ namespace MagicVila_Web.Controllers
         public async Task<IActionResult> Index()
         {
             List<VilaDto> list = new();
-            var response = await _vilaService.GetAllAsync<APIResponse>();
+            var response = await _vilaService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
             if (response != null && response.IsSuccess)
             {
                 list = JsonConvert.DeserializeObject<List<VilaDto>>(Convert.ToString(response.Result));
