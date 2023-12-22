@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MagicVila_Utility;
 using MagicVila_Web.Models;
 using MagicVila_Web.Models.Dto;
 using MagicVila_Web.Services.IServices;
@@ -21,7 +22,7 @@ namespace MagicVila_Web.Controllers
         public async Task<IActionResult> IndexVila()
         {
             List<VilaDto> list = new();
-            var response = await _vilaService.GetAllAsync<APIResponse>();
+            var response = await _vilaService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
             if (response != null && response.IsSuccess)
             {
                 list = JsonConvert.DeserializeObject<List<VilaDto>>(Convert.ToString(response.Result));
@@ -42,7 +43,7 @@ namespace MagicVila_Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response = await _vilaService.CreateAsync<APIResponse>(model);
+                var response = await _vilaService.CreateAsync<APIResponse>(model, HttpContext.Session.GetString(SD.SessionToken));
                 if (response != null && response.IsSuccess)
                 {
                     TempData["success"] = "Vila created successfully";
@@ -56,7 +57,7 @@ namespace MagicVila_Web.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateVila(int vilaId)
         {
-            var response = await _vilaService.GetAsync<APIResponse>(vilaId);
+            var response = await _vilaService.GetAsync<APIResponse>(vilaId, HttpContext.Session.GetString(SD.SessionToken));
             if (response != null && response.IsSuccess)
             {
                 VilaDto model = JsonConvert.DeserializeObject<VilaDto>(Convert.ToString(response.Result));
@@ -72,7 +73,7 @@ namespace MagicVila_Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response = await _vilaService.UpdateAsync<APIResponse>(model);
+                var response = await _vilaService.UpdateAsync<APIResponse>(model, HttpContext.Session.GetString(SD.SessionToken));
                 if (response != null && response.IsSuccess)
                 {
                     TempData["success"] = "Vila updated successfully";
@@ -86,7 +87,7 @@ namespace MagicVila_Web.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteVila(int vilaId)
         {
-            var response = await _vilaService.GetAsync<APIResponse>(vilaId);
+            var response = await _vilaService.GetAsync<APIResponse>(vilaId, HttpContext.Session.GetString(SD.SessionToken));
             if (response != null && response.IsSuccess)
             {
                 VilaDto model = JsonConvert.DeserializeObject<VilaDto>(Convert.ToString(response.Result));
@@ -100,7 +101,7 @@ namespace MagicVila_Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteVila(VilaDto model)
         {
-            var response = await _vilaService.DeleteAsync<APIResponse>(model.Id);
+            var response = await _vilaService.DeleteAsync<APIResponse>(model.Id, HttpContext.Session.GetString(SD.SessionToken));
             if (response != null && response.IsSuccess)
             {
                 TempData["success"] = "Vila deleted successfully";

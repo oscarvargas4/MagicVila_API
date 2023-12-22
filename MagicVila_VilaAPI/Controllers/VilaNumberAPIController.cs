@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
-using MagicVila_VilaAPI.Data;
 using MagicVila_VilaAPI.Logging;
 using MagicVila_VilaAPI.Models;
 using MagicVila_VilaAPI.Models.Dto;
 using MagicVila_VilaAPI.Repository.IRepository;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Net;
 
 namespace MagicVila_VilaAPI.Controllers
@@ -90,6 +88,7 @@ namespace MagicVila_VilaAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         public async Task<ActionResult<APIResponse>> CreateVilaNumber([FromBody] VilaNumberCreateDto createDto)
@@ -131,6 +130,7 @@ namespace MagicVila_VilaAPI.Controllers
         }
 
         [HttpDelete("{id:int}", Name = "DeleteVilaNumber")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -164,6 +164,7 @@ namespace MagicVila_VilaAPI.Controllers
         }
 
         [HttpPut("{id:int}", Name = "UpdateVilaNumber")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -205,6 +206,7 @@ namespace MagicVila_VilaAPI.Controllers
         }
 
         [HttpPatch("{id:int}", Name = "UpdatePartialVilaNumber")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
