@@ -3,6 +3,7 @@ using MagicVila_Web.Models;
 using MagicVila_Web.Models.Dto;
 using MagicVila_Web.Models.ViewModel;
 using MagicVila_Web.Services.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
@@ -31,6 +32,7 @@ namespace MagicVila_Web.Controllers
             return View(list);
         }
 
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> CreateVilaNumber()
         {
             VilaNumberCreateViewModel vilaNumberViewModel = new();
@@ -45,6 +47,7 @@ namespace MagicVila_Web.Controllers
             return View(vilaNumberViewModel);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateVilaNumber(VilaNumberCreateViewModel model)
@@ -79,6 +82,7 @@ namespace MagicVila_Web.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateVilaNumber(int vilaNo)
         {
             VilaNumberUpdateViewModel vilaNumberViewModel = new();
@@ -102,6 +106,7 @@ namespace MagicVila_Web.Controllers
             return NotFound();
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateVilaNumber(VilaNumberUpdateViewModel model)
@@ -136,6 +141,7 @@ namespace MagicVila_Web.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteVilaNumber(int vilaNo)
         {
             VilaNumberDeleteViewModel vilaNumberViewModel = new();
@@ -160,6 +166,7 @@ namespace MagicVila_Web.Controllers
             return NotFound();
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteVilaNumber(VilaNumberDeleteViewModel model)
