@@ -11,8 +11,9 @@ using System.Net;
 namespace MagicVila_VilaAPI.Controllers
 {
     // [Route("api/[controller]")]
-    [Route("api/VilaAPI")]
+    [Route("api/v{version:apiVersion}/VilaAPI")]
     [ApiController]
+    [ApiVersion("1.0")]
     public class VilaAPIController : ControllerBase
     {
         private readonly ILogging _logger;

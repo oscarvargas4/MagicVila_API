@@ -23,10 +23,12 @@ builder.Services.AddApiVersioning(options =>
 {
     options.AssumeDefaultVersionWhenUnspecified = true;
     options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.ReportApiVersions = true;
 });
 builder.Services.AddVersionedApiExplorer(options =>
 {
     options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
 });
 builder.Services.AddScoped<IVilaRepository, VilaRepository>();
 builder.Services.AddScoped<IVilaNumberRepository, VilaNumberRepository>();
@@ -88,6 +90,23 @@ builder.Services.AddSwaggerGen(options =>
         }
 
     });
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1.0",
+        Title = "Magic Vila",
+        Description = "API to manage Vila",
+        TermsOfService = new Uri("https://example.com/terms"),
+        Contact = new OpenApiContact
+        {
+            Name = "Dotnet",
+            Url = new Uri("https://dotnet.microsoft.com/en-us/")
+        },
+        License = new OpenApiLicense
+        {
+            Name = "Example License",
+            Url = new Uri("https://example.com/license")
+        }
+    });
 });
 builder.Services.AddSingleton<ILogging, LoggingV2>();
 
@@ -97,7 +116,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Magic_VillaV1");
+    });
 }
 
 app.UseHttpsRedirection();
