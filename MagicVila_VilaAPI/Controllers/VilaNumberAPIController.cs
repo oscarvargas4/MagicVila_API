@@ -11,8 +11,10 @@ using System.Net;
 namespace MagicVila_VilaAPI.Controllers
 {
     // [Route("api/[controller]")]
-    [Route("api/VilaNumberAPI")]
+    [Route("api/v{version:apiVersion}/VilaNumberAPI")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     public class VilaNumberAPIController : ControllerBase
     {
         private readonly ILogging _logger;
@@ -31,6 +33,7 @@ namespace MagicVila_VilaAPI.Controllers
         }
 
         [HttpGet]
+        [MapToApiVersion("1.0")]
         [ProducesResponseType(200)]
         public async Task<ActionResult<APIResponse>> GetVilaNumbers()
         {
@@ -50,6 +53,13 @@ namespace MagicVila_VilaAPI.Controllers
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
             return BadRequest(_response);
+        }
+
+        [HttpGet]
+        [MapToApiVersion("2.0")]
+        public IEnumerable<string> Get()
+        {
+            return new string[] { "value1", "value2" };
         }
 
         [HttpGet("{id:int}", Name = "GetVilaNumber")]
