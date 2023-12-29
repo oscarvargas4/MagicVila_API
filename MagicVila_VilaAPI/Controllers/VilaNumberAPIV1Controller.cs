@@ -14,8 +14,7 @@ namespace MagicVila_VilaAPI.Controllers
     [Route("api/v{version:apiVersion}/VilaNumberAPI")]
     [ApiController]
     [ApiVersion("1.0")]
-    [ApiVersion("2.0")]
-    public class VilaNumberAPIController : ControllerBase
+    public class VilaNumberAPIV1Controller : ControllerBase
     {
         private readonly ILogging _logger;
         private readonly IVilaNumberRepository _dbVilaNumber;
@@ -23,7 +22,7 @@ namespace MagicVila_VilaAPI.Controllers
         private readonly IMapper _mapper;
         protected APIResponse _response;
 
-        public VilaNumberAPIController(ILogging logger, IVilaNumberRepository dbVilaNumber, IVilaRepository dbVila, IMapper mapper)
+        public VilaNumberAPIV1Controller(ILogging logger, IVilaNumberRepository dbVilaNumber, IVilaRepository dbVila, IMapper mapper)
         {
             _logger = logger;
             _dbVilaNumber = dbVilaNumber;
@@ -33,7 +32,7 @@ namespace MagicVila_VilaAPI.Controllers
         }
 
         [HttpGet]
-        [MapToApiVersion("1.0")]
+        //[MapToApiVersion("1.0")]
         [ProducesResponseType(200)]
         public async Task<ActionResult<APIResponse>> GetVilaNumbers()
         {
@@ -53,13 +52,6 @@ namespace MagicVila_VilaAPI.Controllers
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
             return BadRequest(_response);
-        }
-
-        [HttpGet]
-        [MapToApiVersion("2.0")]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
         }
 
         [HttpGet("{id:int}", Name = "GetVilaNumber")]
