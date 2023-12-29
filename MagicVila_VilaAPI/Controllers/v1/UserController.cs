@@ -4,7 +4,7 @@ using MagicVila_VilaAPI.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace MagicVila_VilaAPI.Controllers
+namespace MagicVila_VilaAPI.Controllers.v1
 {
     [Route("api/v{version:apiVersion}/UserAuth")]
     [ApiController]
@@ -49,7 +49,7 @@ namespace MagicVila_VilaAPI.Controllers
             }
 
             var user = await _userRepository.Register(model);
-            if(user == null)
+            if (user == null)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
