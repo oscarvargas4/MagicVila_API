@@ -4,11 +4,11 @@ using MagicVila_VilaAPI.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace MagicVila_VilaAPI.Controllers.v1
+namespace MagicVila_VilaAPI.Controllers
 {
     [Route("api/v{version:apiVersion}/UserAuth")]
     [ApiController]
-    [ApiVersion("1.0")]
+    [ApiVersionNeutral]
     public class UserController : Controller
     {
         public readonly IUserRepository _userRepository;
