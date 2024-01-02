@@ -34,12 +34,22 @@ namespace MagicVila_VilaAPI.Controllers.v1
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [ResponseCache(Duration = 30)] // Or [ResponseCache(CacheProfileName = "Default30")] This is defined in Program.cs
-        public async Task<ActionResult<APIResponse>> GetVilas()
+        public async Task<ActionResult<APIResponse>> GetVilas([FromQuery(Name = "Filter By Occupancy")]int? occupancy)
         {
             try
             {
                 _logger.Log("Getting all vilas", "");
-                IEnumerable<Vila> vilaList = await _dbVila.GetAllAsync();
+                IEnumerable<Vila> vilaList;
+                
+                if (occupancy > 0)
+                {
+                    vilaList = await _dbVila.GetAllAsync(u => u.Occupancy == occupancy);
+                }
+                else
+                {
+                    vilaList = await _dbVila.GetAllAsync();
+                }
+
                 _response.Result = _mapper.Map<List<VilaDto>>(vilaList);
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
