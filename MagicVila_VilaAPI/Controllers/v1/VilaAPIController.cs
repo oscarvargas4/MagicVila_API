@@ -6,7 +6,6 @@ using MagicVila_VilaAPI.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using System.Net;
 
 namespace MagicVila_VilaAPI.Controllers.v1
@@ -35,20 +34,23 @@ namespace MagicVila_VilaAPI.Controllers.v1
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [ResponseCache(Duration = 30)] // Or [ResponseCache(CacheProfileName = "Default30")] This is defined in Program.cs
-        public async Task<ActionResult<APIResponse>> GetVilas([FromQuery(Name = "Filter By Occupancy")]int? occupancy, [FromQuery(Name = "Vila Name Searching")] string? search)
+        public async Task<ActionResult<APIResponse>> GetVilas([FromQuery(Name = "Filter By Occupancy")] int? occupancy,
+            [FromQuery(Name = "Vila Name Searching")] string? search,
+            int pageSize = 2,
+            int pageNumber = 1)
         {
             try
             {
                 _logger.Log("Getting all vilas", "");
                 IEnumerable<Vila> vilaList;
-                
+
                 if (occupancy > 0)
                 {
-                    vilaList = await _dbVila.GetAllAsync(u => u.Occupancy == occupancy);
+                    vilaList = await _dbVila.GetAllAsync(u => u.Occupancy == occupancy, pageSize:pageSize, pageNumber:pageNumber);
                 }
                 else
                 {
-                    vilaList = await _dbVila.GetAllAsync();
+                    vilaList = await _dbVila.GetAllAsync(pageSize: pageSize, pageNumber: pageNumber);
                 }
                 if (!string.IsNullOrEmpty(search))
                 {
