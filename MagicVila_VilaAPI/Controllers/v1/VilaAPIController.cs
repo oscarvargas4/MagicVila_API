@@ -33,6 +33,7 @@ namespace MagicVila_VilaAPI.Controllers.v1
         [ProducesResponseType(200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
+        [ResponseCache(Duration = 30)] // Or [ResponseCache(CacheProfileName = "Default30")] This is defined in Program.cs
         public async Task<ActionResult<APIResponse>> GetVilas()
         {
             try
@@ -59,6 +60,7 @@ namespace MagicVila_VilaAPI.Controllers.v1
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
+        //[ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         // another way: [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<APIResponse>> GetVila(int id)
         {
