@@ -6,6 +6,7 @@ using MagicVila_VilaAPI.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Net;
 
 namespace MagicVila_VilaAPI.Controllers.v1
@@ -34,7 +35,7 @@ namespace MagicVila_VilaAPI.Controllers.v1
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [ResponseCache(Duration = 30)] // Or [ResponseCache(CacheProfileName = "Default30")] This is defined in Program.cs
-        public async Task<ActionResult<APIResponse>> GetVilas([FromQuery(Name = "Filter By Occupancy")]int? occupancy)
+        public async Task<ActionResult<APIResponse>> GetVilas([FromQuery(Name = "Filter By Occupancy")]int? occupancy, [FromQuery(Name = "Vila Name Searching")] string? search)
         {
             try
             {
@@ -48,6 +49,10 @@ namespace MagicVila_VilaAPI.Controllers.v1
                 else
                 {
                     vilaList = await _dbVila.GetAllAsync();
+                }
+                if (!string.IsNullOrEmpty(search))
+                {
+                    vilaList = vilaList.Where(u => u.Name.ToLower().Contains(search.ToLower()));
                 }
 
                 _response.Result = _mapper.Map<List<VilaDto>>(vilaList);
