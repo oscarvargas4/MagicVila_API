@@ -49,7 +49,7 @@ namespace MagicVila_VilaAPI.Controllers
             }
 
             var user = await _userRepository.Register(model);
-            if (user == null)
+            if (user.ID == null)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
