@@ -15,13 +15,15 @@ namespace MagicVila_VilaAPI.Repository
     {
         private readonly ApplicationDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private string secretKey;
         private readonly IMapper _mapper;
 
-        public UserRepository(ApplicationDbContext db, UserManager<ApplicationUser> userManager, IConfiguration configuration, IMapper mapper)
+        public UserRepository(ApplicationDbContext db, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, IMapper mapper)
         {
             _db = db;
             _userManager = userManager;
+            _roleManager = roleManager;
             secretKey = configuration.GetValue<string>("ApiSettings:Secret");
             _mapper = mapper;
         }
@@ -93,11 +95,17 @@ namespace MagicVila_VilaAPI.Repository
                 var result = await _userManager.CreateAsync(user, registrationRequestDto.Password);
                 if (result.Succeeded)
                 {
+                    if(!_roleManager.RoleExistsAsync("admin").GetAwaiter().GetResult())
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole("admin"));
+                        await _roleManager.CreateAsync(new IdentityRole("customer"));
+                    }
                     await _userManager.AddToRoleAsync(user, "admin");
                     var userToReturn = _db.ApplicationUsers.FirstOrDefault(u => u.UserName == registrationRequestDto.UserName);
                     return _mapper.Map<UserDto>(userToReturn);
                 }
-            } catch (Exception ex) { }
+            }
+            catch (Exception ex) { }
 
             return new UserDto() { };
         }
