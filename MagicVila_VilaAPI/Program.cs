@@ -40,6 +40,7 @@ builder.Services.AddVersionedApiExplorer(options =>
 builder.Services.AddScoped<IVilaRepository, VilaRepository>();
 builder.Services.AddScoped<IVilaNumberRepository, VilaNumberRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddSingleton<ILogging, LoggingV2>();
 
 var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
 
@@ -137,7 +138,6 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
-builder.Services.AddSingleton<ILogging, LoggingV2>();
 
 var app = builder.Build();
 
