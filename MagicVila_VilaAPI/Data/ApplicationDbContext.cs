@@ -1,20 +1,23 @@
 ﻿using MagicVila_VilaAPI.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace MagicVila_VilaAPI.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 
         }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Vila> Vilas { get; set; }
         public DbSet<VilaNumber> VilaNumbers { get; set; }
         public DbSet<LocalUser> LocalUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Vila>().HasData(
                 new Vila
                 {
