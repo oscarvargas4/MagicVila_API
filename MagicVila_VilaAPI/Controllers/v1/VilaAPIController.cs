@@ -37,7 +37,7 @@ namespace MagicVila_VilaAPI.Controllers.v1
         [ResponseCache(Duration = 30)] // Or [ResponseCache(CacheProfileName = "Default30")] This is defined in Program.cs
         public async Task<ActionResult<APIResponse>> GetVilas([FromQuery(Name = "Filter By Occupancy")] int? occupancy,
             [FromQuery(Name = "Vila Name Searching")] string? search,
-            int pageSize = 2,
+            int pageSize = 0,
             int pageNumber = 1)
         {
             try
