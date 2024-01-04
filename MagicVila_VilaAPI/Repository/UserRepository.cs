@@ -63,7 +63,7 @@ namespace MagicVila_VilaAPI.Repository
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.UserName.ToString()),
                     new Claim(ClaimTypes.Role, roles.FirstOrDefault())
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
@@ -74,8 +74,7 @@ namespace MagicVila_VilaAPI.Repository
             LoginResponseDto loginResponseDto = new LoginResponseDto()
             {
                 Token = tokenHandler.WriteToken(token),
-                User = _mapper.Map<UserDto>(user),
-                Role = roles.FirstOrDefault()
+                User = _mapper.Map<UserDto>(user)
             };
             return loginResponseDto;
         }
